@@ -106,7 +106,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         case 'auth/network-request-failed':
           errorMessage = 'Network error. Please check your connection.';
           break;
-          break;
         case 'auth/invalid-credential':
           errorMessage = 'Invalid email or password.';
           break;
