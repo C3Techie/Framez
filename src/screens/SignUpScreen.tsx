@@ -45,7 +45,7 @@ const SignUpScreen = () => {
 
     setLoading(true);
     try {
-      await signup(data.email, data.password);
+      await signup(data.email, data.password, data.username || data.email.split('@')[0]);
       setSignupError(null);
     } catch (error: any) {
       setSignupError(error.message);
