@@ -1,7 +1,7 @@
 export interface Post {
   id: string;
   authorId: string;
-  authorEmail: string;
+  authorUsername: string;
   caption: string;
   imageUrl: string | null;
   timestamp: { seconds: number, nanoseconds: number } | null;
@@ -12,7 +12,7 @@ export interface Post {
 export interface Comment {
   id: string;
   userId: string;
-  userEmail: string;
+  username: string;
   text: string;
   timestamp: Date;
 }
