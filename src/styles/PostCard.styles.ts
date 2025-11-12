@@ -20,18 +20,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
-  avatar: {
+  userTextContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  logoCircle: {
     width: 32,
     height: 32,
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 8,
+    overflow: 'hidden',
   },
-  avatarText: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#fff',
+  logoImage: {
+    width: '100%',
+    height: '100%',
   },
   username: {
     fontSize: 14,
@@ -60,6 +64,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 8,
     borderTopWidth: 1,
+    alignItems: 'center',
   },
   actionButton: {
     flexDirection: 'row',
@@ -73,6 +78,13 @@ const styles = StyleSheet.create({
   actionText: {
     fontSize: 12,
     fontWeight: '500',
+  },
+  timestampContainer: {
+    marginLeft: 'auto',
+  },
+  timestampAction: {
+    fontSize: 11,
+    fontWeight: '400',
   },
   modalOverlay: {
     flex: 1,
