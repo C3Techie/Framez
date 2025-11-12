@@ -1,19 +1,19 @@
 import React from 'react';
-import { Text, View, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableOpacity, Image } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
 import { Colors } from '../../constants/Colors';
 import { formatPostDate } from '../../utils/dateUtils';
 import styles from '../../styles/PostCard.styles';
 
 interface PostHeaderProps {
-  authorEmail: string;
+  authorUsername: string;
   timestamp: { seconds: number, nanoseconds: number } | null;
   isOwnPost: boolean;
   onMenuPress: () => void;
 }
 
 const PostHeader: React.FC<PostHeaderProps> = ({
-  authorEmail,
+  authorUsername,
   timestamp,
   isOwnPost,
   onMenuPress,
@@ -25,14 +25,16 @@ const PostHeader: React.FC<PostHeaderProps> = ({
   return (
     <View style={[styles.header, { borderBottomColor: colors.border }]}>
       <View style={styles.userInfo}>
-        <View style={[styles.avatar, { backgroundColor: colors.accent }]}>
-          <Text style={styles.avatarText}>
-            {authorEmail?.charAt(0).toUpperCase()}
-          </Text>
+        <View style={[styles.logoCircle]}>
+          <Image
+            source={require('../../assets/framez.png')}
+            style={styles.logoImage}
+            resizeMode="cover"
+          />
         </View>
-        <View>
+        <View style={styles.userTextContainer}>
           <Text style={[styles.username, { color: colors.textPrimary }]}>
-            {authorEmail}
+            {authorUsername}
           </Text>
           <Text style={[styles.timestamp, { color: colors.textMuted }]}>
             {timeAgo}
