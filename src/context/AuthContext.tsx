@@ -1,6 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { auth } from '../config/firebaseConfig';
+
+const AUTH_PERSISTENCE_KEY = '@framez_auth_user';
 
 interface AuthContextType {
   user: User | null;
@@ -26,9 +29,46 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Save user to AsyncStorage for persistence
+  const saveUserToStorage = async (user: User | null) => {
+    try {
+      if (user) {
+        const userData = {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+        };
+        await AsyncStorage.setItem(AUTH_PERSISTENCE_KEY, JSON.stringify(userData));
+      } else {
+        await AsyncStorage.removeItem(AUTH_PERSISTENCE_KEY);
+      }
+    } catch (error) {
+      console.error('Error saving user to storage:', error);
+    }
+  };
+
+  // Load user from AsyncStorage on app start
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser: User | null) => {
+    const loadUserFromStorage = async () => {
+      try {
+        const savedUser = await AsyncStorage.getItem(AUTH_PERSISTENCE_KEY);
+        if (savedUser) {
+          // User data exists in storage, auth state will be updated by onAuthStateChanged
+          console.log('Restored user session from storage');
+        }
+      } catch (error) {
+        console.error('Error loading user from storage:', error);
+      }
+    };
+
+    loadUserFromStorage();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser: User | null) => {
       setUser(currentUser);
+      await saveUserToStorage(currentUser);
       setLoading(false);
     });
     return unsubscribe;
@@ -38,7 +78,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string) => {
     console.time('Login Time');
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      await saveUserToStorage(userCredential.user);
       console.timeEnd('Login Time');
     } catch (error: any) {
       console.timeEnd('Login Time');
@@ -64,6 +105,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         case 'auth/network-request-failed':
           errorMessage = 'Network error. Please check your connection.';
           break;
+          break;
         case 'auth/invalid-credential':
           errorMessage = 'Invalid email or password.';
           break;
@@ -78,7 +120,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Enhanced error handling for signup
   const signup = async (email: string, password: string) => {
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await saveUserToStorage(userCredential.user);
     } catch (error: any) {
       let errorMessage = 'Sign up failed. Please try again.';
       
@@ -111,7 +154,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = async () => {
-    await signOut(auth);
+    try {
+      await signOut(auth);
+      await AsyncStorage.removeItem(AUTH_PERSISTENCE_KEY);
+    } catch (error) {
+      console.error('Error during logout:', error);
+      throw error;
+    }
   };
 
   const value = {

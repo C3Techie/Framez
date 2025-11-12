@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableOpacity, Image } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
 import { Colors } from '../../constants/Colors';
 import styles from '../../styles/FeedScreen.styles';
@@ -13,10 +13,14 @@ const EmptyFeed: React.FC<EmptyFeedProps> = ({ onCreatePost }) => {
   const colors = Colors[theme];
 
   return (
-    <View style={styles.emptyContainer}>
-      <View style={[styles.emptyIcon, { backgroundColor: colors.bgSecondary }]}>
-        <Text style={styles.emptyIconText}>📸</Text>
-      </View>
+      <View style={styles.emptyContainer}>
+        <View style={[styles.logoCircle]}>
+          <Image 
+            source={require('../../assets/framez.png')}
+            style={styles.logoImage}
+            resizeMode="cover"
+          />
+        </View>
       <Text style={[styles.emptyTitle, { color: colors.textPrimary }]}>
         No posts yet
       </Text>
