@@ -77,13 +77,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Enhanced error handling for login
   const login = async (email: string, password: string) => {
-    console.time('Login Time');
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       await saveUserToStorage(userCredential.user);
-      console.timeEnd('Login Time');
     } catch (error: any) {
-      console.timeEnd('Login Time');
       let errorMessage = 'Login failed. Please try again.';
       
       // Handle specific Firebase auth errors
