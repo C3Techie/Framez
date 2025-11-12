@@ -3,32 +3,25 @@ import { Alert } from 'react-native';
 import { db } from '../config/firebaseConfig';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import { Post } from '../types/post';
+import { useAuth } from '../context/AuthContext';
 
 export const usePosts = (enabled: boolean = true) => {
+  const { user } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!enabled) {
+    if (!enabled || !user) {
+      setPosts([]); // Clear posts if not enabled or user is logged out
       setLoading(false);
       return;
     }
 
-    // Set a timeout to prevent infinite loading
-    const loadingTimeout = setTimeout(() => {
-      if (loading) {
-        console.warn('Posts loading timeout - setting loading to false');
-        setLoading(false);
-        setError('Loading took too long. Please check your connection.');
-      }
-    }, 15000); // 15 seconds timeout
-
     const postsQuery = query(collection(db, 'posts'), orderBy('timestamp', 'desc'));
 
-    const unsubscribe = onSnapshot(postsQuery, 
+    const unsubscribe = onSnapshot(postsQuery,
       (snapshot) => {
-        clearTimeout(loadingTimeout);
         const fetchedPosts: Post[] = snapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
@@ -38,7 +31,6 @@ export const usePosts = (enabled: boolean = true) => {
         setError(null);
       }, 
       (error: any) => {
-        clearTimeout(loadingTimeout);
         console.error('Firestore Listen Error:', error);
         
         let errorMessage = 'Failed to fetch posts';
@@ -63,10 +55,9 @@ export const usePosts = (enabled: boolean = true) => {
     );
 
     return () => {
-      clearTimeout(loadingTimeout);
       unsubscribe();
     };
-  }, [enabled]);
+  }, [enabled, user]);
 
   const refetch = () => {
     if (enabled) {
