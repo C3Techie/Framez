@@ -48,7 +48,7 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
           {comments.map(comment => (
             <View key={comment.id} style={styles.commentItem}>
               <Text style={[styles.commentUser, { color: colors.textPrimary }]}>
-                {comment.userEmail}
+                {comment.username}
               </Text>
               <Text style={[styles.commentText, { color: colors.textSecondary }]}>
                 {comment.text}
