@@ -1,4 +1,4 @@
-# 📱 Framez - Social Media Mobile App
+# 📱 Framez
 
 A modern, feature-rich social media mobile application built with React Native and Firebase. Share your moments, connect with others, and explore a beautiful feed of posts.
 
@@ -19,7 +19,6 @@ A modern, feature-rich social media mobile application built with React Native a
 
 ### Posts
 - ✅ **Create Posts** - Share text and/or images
-- ✅ **Image Upload** - Upload photos from gallery or camera
 - ✅ **Real-time Feed** - See posts from all users instantly
 - ✅ **Post Details** - View author, timestamp, and content
 - ✅ **Like Posts** - Interact with posts you love
@@ -28,14 +27,11 @@ A modern, feature-rich social media mobile application built with React Native a
 
 ### Profile
 - ✅ **User Profile** - View your information and stats
-- ✅ **Avatar Upload** - Customize your profile picture
 - ✅ **Your Posts** - See all posts you've created
-- ✅ **Profile Stats** - Track your posts and engagement
 - ✅ **Edit Profile** - Update your information (coming soon)
 
 ### UI/UX
 - ✅ **Dark/Light Theme** - Toggle between themes
-- ✅ **Network Status** - Real-time connectivity monitoring
 - ✅ **Pull to Refresh** - Refresh feed with a swipe
 - ✅ **Loading States** - Smooth loading indicators
 - ✅ **Empty States** - Helpful messages when no content
@@ -84,7 +80,7 @@ Before you begin, ensure you have the following installed:
 
 4. **Start the development server**
    ```bash
-   npm start
+   npm expo start
    # or
    expo start
    ```
@@ -93,6 +89,103 @@ Before you begin, ensure you have the following installed:
    - Scan the QR code with Expo Go (Android) or Camera app (iOS)
    - Or press `a` for Android emulator
    - Or press `i` for iOS simulator
+
+## 📦 Building APK
+
+### Method 1: EAS Build (Recommended)
+
+This method uses Expo's cloud build service - no local Android setup required!
+
+#### Prerequisites
+- Expo account ([Sign up at expo.dev](https://expo.dev))
+- EAS CLI installed globally
+
+#### Steps
+
+1. **Install EAS CLI**
+   ```bash
+   npm install -g eas-cli
+   ```
+
+2. **Check for dependency issues**
+   
+   Before building, always verify your dependencies are correct:
+   ```bash
+   npx expo-doctor
+   ```
+   
+   Fix any issues reported:
+   - Missing peer dependencies: `npx expo install <package-name>`
+   - Version mismatches: `npx expo install <package-name>`
+
+3. **Login to Expo**
+   ```bash
+   eas login
+   ```
+
+4. **Configure EAS Build** (if not already done)
+   ```bash
+   eas build:configure
+   ```
+
+5. **Build the APK**
+   ```bash
+   eas build -p android --profile production
+   ```
+   
+   The build process:
+   - Runs on Expo's cloud servers (you can close your terminal/computer)
+   - Takes approximately 5-15 minutes
+   - Automatically increments version code
+   - Handles keystore generation
+   
+6. **Download your APK**
+   - Get the download link from the terminal output
+   - Or visit [expo.dev](https://expo.dev/accounts/c3techie/projects/Framez/builds)
+
+### Method 2: Local Build (Advanced)
+
+For developers who want faster builds and more control.
+
+#### Prerequisites
+- Android Studio or Android SDK installed
+- JDK 17+ installed
+- All dependencies verified with `npx expo-doctor`
+
+#### Steps
+
+1. **Check dependencies**
+   ```bash
+   npx expo-doctor
+   ```
+   Fix all issues before proceeding!
+
+2. **Prebuild Android folder**
+   ```bash
+   npx expo prebuild --platform android
+   ```
+
+3. **Build the APK**
+   ```bash
+   cd android
+   ./gradlew assembleRelease
+   ```
+   
+   If the build fails:
+   ```bash
+   cd ..
+   npx expo install
+   npx expo prebuild --platform android --clean
+   cd android
+   ./gradlew assembleRelease
+   ```
+
+4. **Find your APK**
+   ```
+   android/app/build/outputs/apk/release/app-release.apk
+   ```
+
+**Note:** After the first successful build, subsequent builds are much faster!
 
 ## 🏗️ Project Structure
 
@@ -146,7 +239,6 @@ Framez/
 - **Firebase Authentication** - User authentication
 - **Cloud Firestore** - Real-time database
 - **Firebase Storage** - Image storage
-- **Expo Image Picker** - Media selection
 - **Expo File System** - File management
 
 ### UI/UX
@@ -170,62 +262,14 @@ This app uses Firebase as the backend. Here's what you need to set up:
 ### 3. Set up Firestore Database
 1. Go to Firestore Database
 2. Create database in production mode (or test mode)
-3. Set up security rules:
-   ```javascript
-   rules_version = '2';
-   service cloud.firestore {
-     match /databases/{database}/documents {
-       match /posts/{postId} {
-         allow read: if request.auth != null;
-         allow create: if request.auth != null;
-         allow update, delete: if request.auth.uid == resource.data.authorId;
-       }
-     }
-   }
-   ```
+3. Set up security rules
+  
 
 ### 4. Set up Storage
 1. Go to Storage
 2. Create a default bucket
 3. Set up security rules:
-   ```javascript
-   rules_version = '2';
-   service firebase.storage {
-     match /b/{bucket}/o {
-       match /posts/{userId}/{postId} {
-         allow read: if request.auth != null;
-         allow write: if request.auth.uid == userId;
-       }
-       match /avatars/{userId} {
-         allow read: if request.auth != null;
-         allow write: if request.auth.uid == userId;
-       }
-     }
-   }
-   ```
-
-## 📱 Running on Devices
-
-### Android
-```bash
-npm run android
-# or
-expo start --android
-```
-
-### iOS
-```bash
-npm run ios
-# or
-expo start --ios
-```
-
-### Web (Preview)
-```bash
-npm run web
-# or
-expo start --web
-```
+  
 
 ## 🧪 Testing
 
@@ -245,16 +289,6 @@ Visit our hosted demo: [Framez on Appetize.io](#) *(Coming Soon)*
 
 Watch the full demo: [YouTube/Loom Link](#) *(Coming Soon)*
 
-## 🚧 Roadmap
-
-- [ ] Edit profile functionality
-- [ ] Search users and posts
-- [ ] Direct messaging
-- [ ] Push notifications
-- [ ] Story feature
-- [ ] Video posts
-- [ ] Follow/Unfollow users
-- [ ] Explore page
 
 ## 🤝 Contributing
 
@@ -276,9 +310,6 @@ This project is created as part of the HNG Internship Frontend Stage 4 Task.
 - Expo team for amazing development tools
 - React Native community
 
-## 📞 Support
-
-For support, email [your-email] or open an issue in this repository.
 
 ---
 
