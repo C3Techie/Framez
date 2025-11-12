@@ -6,9 +6,9 @@ import { useTheme } from '../context/ThemeContext';
 import { Colors } from '../constants/Colors';
 import { ProfileTab } from '../types/profile';
 import { useUserPosts } from '../hooks/useUserPosts';
-import { useAvatarUpload } from '../hooks/useAvatarUpload';
 import { useProfileStats } from '../hooks/useProfileStats';
 import { useRefresh } from '../hooks/useRefresh';
+import { useUsername } from '../hooks/useUsername';
 import ProfileHeader from '../components/profile/ProfileHeader';
 import ProfileInfo from '../components/profile/ProfileInfo';
 import ProfileStats from '../components/profile/ProfileStats';
@@ -23,11 +23,11 @@ const ProfileScreen = () => {
   const { user, logout } = useAuth();
   const { theme } = useTheme();
   const colors = Colors[theme];
+  const { username } = useUsername();
 
   const [activeTab, setActiveTab] = useState<ProfileTab>('posts');
   
   const { posts, loading, refetch } = useUserPosts(true);
-  const { avatarUrl, uploading: uploadingAvatar, pickAvatar } = useAvatarUpload();
   const stats = useProfileStats(posts);
   const { refreshing, onRefresh } = useRefresh(refetch);
 
@@ -50,8 +50,6 @@ const ProfileScreen = () => {
     return <LoadingProfile />;
   }
 
-  const username = user?.email?.split('@')[0] || 'User';
-
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.bgPrimary }]} edges={['top']}>
       {/* Add NetworkStatusBar at the top */}
@@ -62,7 +60,7 @@ const ProfileScreen = () => {
         onLogoutPress={handleLogout}
       />
 
-      <ScrollView 
+      <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -74,9 +72,6 @@ const ProfileScreen = () => {
       >
         <ProfileInfo
           userEmail={user?.email || ''}
-          avatarUrl={avatarUrl}
-          uploadingAvatar={uploadingAvatar}
-          onAvatarPress={pickAvatar}
         />
 
         <ProfileStats stats={stats} />
