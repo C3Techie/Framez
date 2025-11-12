@@ -5,13 +5,10 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTheme } from '../context/ThemeContext';
 import { Colors } from '../constants/Colors';
-import { useImagePicker } from '../hooks/useImagePicker';
 import { usePostCreation } from '../hooks/usePostCreation';
 import CreatePostHeader from '../components/create-post/CreatePostHeader';
 import UserInfo from '../components/create-post/UserInfo';
 import CaptionInput from '../components/create-post/CaptionInput';
-import ImagePreview from '../components/create-post/ImagePreview';
-import MediaButtons from '../components/create-post/MediaButtons';
 import LoadingIndicator from '../components/create-post/LoadingIndicator';
 import NetworkStatusBar from '../components/common/NetworkStatusBar';
 import styles from '../styles/CreatePostScreen.styles';
@@ -29,19 +26,18 @@ const CreatePostScreen = () => {
   const navigation = useNavigation<CreatePostScreenNavigationProp>();
 
   const [caption, setCaption] = useState('');
-  const { imageUri, pickImage, takePhoto, removeImage } = useImagePicker();
   const { loading, createPost } = usePostCreation();
 
   const handlePost = async () => {
-    const success = await createPost(caption, imageUri);
+    // imageUri is now null since image upload is disabled
+    const success = await createPost(caption, null);
     if (success) {
       setCaption('');
-      removeImage();
       navigation.navigate('Feed' as never);
     }
   };
 
-  const shareDisabled = loading || (!caption.trim() && !imageUri);
+  const shareDisabled = loading || !caption.trim();
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.bgPrimary }]} edges={['top']}>
@@ -61,17 +57,6 @@ const CreatePostScreen = () => {
         <CaptionInput
           value={caption}
           onChangeText={setCaption}
-        />
-
-        <ImagePreview
-          imageUri={imageUri}
-          onRemoveImage={removeImage}
-        />
-
-        <MediaButtons
-          onPickImage={pickImage}
-          onTakePhoto={takePhoto}
-          disabled={loading}
         />
 
         <LoadingIndicator loading={loading} />
