@@ -44,20 +44,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 24,
   },
-  avatar: {
+  logoCircle: {
     width: 40,
     height: 40,
     borderRadius: 20,
     marginRight: 12,
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'hidden',
   },
-  avatarText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#fff',
+  logoImage: {
+    width: '100%',
+    height: '100%',
   },
-  userEmail: {
+  username: {
     fontSize: 14,
     fontWeight: '600',
   },
