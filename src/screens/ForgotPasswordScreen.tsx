@@ -17,7 +17,7 @@ import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../config/firebaseConfig';
 import AuthHeader from '../components/auth/AuthHeader';
 import AuthButton from '../components/auth/AuthButton';
-import styles from '../styles/Auth.styles'; // CHANGED: Import from Auth.styles instead of AuthScreen.styles
+import styles from '../styles/Auth.styles';
 
 type AuthStackParamList = {
   Login: undefined;
