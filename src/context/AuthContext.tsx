@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { auth } from '../config/firebaseConfig';
+import { auth, db } from '../config/firebaseConfig';
+import { doc, setDoc } from 'firebase/firestore';
 
 const AUTH_PERSISTENCE_KEY = '@framez_auth_user';
 
@@ -9,7 +10,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string) => Promise<void>;
+  signup: (email: string, password: string, username: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -118,9 +119,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // Enhanced error handling for signup
-  const signup = async (email: string, password: string) => {
+  const signup = async (email: string, password: string, username: string) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      
+      // Save username to Firestore
+      await setDoc(doc(db, 'users', userCredential.user.uid), {
+        username: username,
+        email: email,
+        createdAt: new Date().toISOString(),
+        postsCount: 0,
+        followersCount: 0,
+        followingCount: 0,
+      });
+      
       await saveUserToStorage(userCredential.user);
     } catch (error: any) {
       let errorMessage = 'Sign up failed. Please try again.';
