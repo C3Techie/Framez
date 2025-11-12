@@ -4,6 +4,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { Colors } from '../../constants/Colors';
 import { usePostActions } from '../../hooks/usePostActions';
 import { useComments } from '../../hooks/useComments';
+import { useAuthorUsername } from '../../hooks/useAuthorUsername';
 import { PostCardProps } from '../../types/post';
 import PostHeader from './PostHeader';
 import PostContent from './PostContent';
@@ -17,6 +18,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdate }) => {
   const { theme } = useTheme();
   const colors = Colors[theme];
   const [isMenuVisible, setIsMenuVisible] = useState(false);
+  const { username } = useAuthorUsername(post.authorId);
 
   const {
     isEditing,
@@ -43,7 +45,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onUpdate }) => {
     <View style={[styles.container, { backgroundColor: colors.bgCard }]}>
       {/* Header */}
       <PostHeader
-        authorEmail={post.authorEmail}
+        authorUsername={username}
         timestamp={post.timestamp}
         isOwnPost={isOwnPost}
         onMenuPress={() => setIsMenuVisible(true)}
